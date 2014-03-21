@@ -45,6 +45,8 @@ static const char *i2c_adapter_names[] = {
 	"SMBus I801 adapter",
 	"i915 gmbus vga",
 	"i915 gmbus panel",
+	"i2c-designware-pci-0",
+	"i2c-designware-pci-1",
 };
 
 /* Keep this enum consistent with i2c_adapter_names */
@@ -52,6 +54,8 @@ enum i2c_adapter_type {
 	I2C_ADAPTER_SMBUS = 0,
 	I2C_ADAPTER_VGADDC,
 	I2C_ADAPTER_PANEL,
+	I2C_ADAPTER_I2C0,
+	I2C_ADAPTER_I2C1,
 };
 
 struct i2c_peripheral {
@@ -374,6 +378,22 @@ static struct chromeos_laptop chromebook_pixel = {
 	},
 };
 
+static struct chromeos_laptop hp_chromebook_14 = {
+	.i2c_peripherals = {
+		/* Touchpad. */
+		{ .add = setup_cyapa_tp, I2C_ADAPTER_I2C0 },
+	},
+};
+
+static struct chromeos_laptop acer_c720 = {
+	.i2c_peripherals = {
+		/* Light Sensor. */
+		{ .add = setup_isl29018_als, I2C_ADAPTER_I2C1 },
+		/* Touchpad. */
+		{ .add = setup_cyapa_tp, I2C_ADAPTER_I2C0 },
+	},
+};
+
 static struct chromeos_laptop acer_c7_chromebook = {
 	.i2c_peripherals = {
 		/* Touchpad. */
@@ -429,6 +449,20 @@ static struct dmi_system_id chromeos_laptop_dmi_table[] __initdata = {
 			DMI_MATCH(DMI_PRODUCT_NAME, "Link"),
 		},
 		_CBDD(chromebook_pixel),
+	},
+	{
+		.ident = "HP Chromebook 14",
+		.matches = {
+			DMI_MATCH(DMI_PRODUCT_NAME, "Falco"),
+		},
+		_CBDD(hp_chromebook_14),
+	},
+	{
+		.ident = "Acer C720",
+		.matches = {
+			DMI_MATCH(DMI_PRODUCT_NAME, "Peppy"),
+		},
+		_CBDD(acer_c720),
 	},
 	{
 		.ident = "Acer C7 Chromebook",
